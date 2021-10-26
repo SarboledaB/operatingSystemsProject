@@ -23,5 +23,3 @@ def main():
 
     process.daemon = True
     process.start()
-
-    
