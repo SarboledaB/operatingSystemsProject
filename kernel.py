@@ -12,7 +12,7 @@ modules = {
     "FileManager" : ''
 }
 
-prueba = {'cmd': 'create', 'src': 'GUI', 'dst': 'FILE', 'msg': 'ARCHIVO1'}
+prueba = {'cmd': 'delete', 'src': 'GUI', 'dst': 'FILE', 'msg': 'ARCHIVO1'}
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.bind((str(host), int(port)))
@@ -75,11 +75,11 @@ def FileManagerCon():
     accept.daemon = True
     accept.start()
 
-    ApplicationModule()
+    FileManager()
 
 def initialization():
-    ApplicationModuleCon()
     FileManagerCon()
+    ApplicationModuleCon()
 
 def execution():
     pass
@@ -106,5 +106,4 @@ if __name__ == '__main__':
                     modules['AppicationModule'].send(pickle.dumps(prueba))
             elif prueba['dst'] == 'FILE':
                 if modules['FileManager'] != '':
-                    print(modules['FileManager'])
                     modules['FileManager'].send(pickle.dumps(prueba))
