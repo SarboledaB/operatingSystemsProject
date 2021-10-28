@@ -114,10 +114,13 @@ class ApplicationModule(object):
                     if p.name() == 'Calculator.exe' or p.name() == 'CalculatorApp.exe':
                         count=1
                 running = (count == 1)
-            sock.send(pickle.dumps({'codeterm': 4, 'msg': 'APP1'}))
+            try:
+                sock.send(pickle.dumps({'codeterm': 4, 'msg': 'APP1'}))
+            except:
+                pass
             applications['APP1'] = ''
             
-        def ActiveApp2(running):
+        def ActiveApp2():
             global applications
             running = True
             while running:
@@ -126,7 +129,10 @@ class ApplicationModule(object):
                     if p.name() == 'mspaint.exe':
                         count=1
                 running = (count == 1)
-            sock.send(pickle.dumps({'codeterm': 4, 'msg': 'APP2'}))
+            try:
+                sock.send(pickle.dumps({'codeterm': 4, 'msg': 'APP2'}))
+            except:
+                pass
             applications['APP2'] = ''
     
   
