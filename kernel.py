@@ -76,14 +76,13 @@ def processCon():
                 if modules['GUIModule'] != '':
                     data = modules['GUIModule'].recv(1024)
                     if data:
-                        msg = pickle.loads(data)
                         print(pickle.loads(data))
                         if msg['dst'] == 'APP':
                             if modules['AppicationModule'] != '':
-                                modules['AppicationModule'].send(pickle.dumps(msg))
+                                modules['AppicationModule'].send(pickle.dumps(pickle.loads(data)))
                         elif msg['dst'] == 'FILE':
                             if modules['FileManager'] != '':
-                                modules['FileManager'].send(pickle.dumps(msg))
+                                modules['FileManager'].send(pickle.dumps(pickle.loads(data)))
             except:
                 pass
 
