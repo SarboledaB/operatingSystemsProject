@@ -4,6 +4,7 @@ import sys
 import pickle
 from Apps.ApplicationModule import ApplicationModule
 from FileManager.FileManager import FileManager
+from GUI import main as GUI
 
 host="localhost"
 port=4000
@@ -62,27 +63,36 @@ def acceptConFileManager():
         except:
             pass
 
-def processCon():
+def processGUICon():
+    	while True:
+            try:
+                if modules['GUIModule'] != '':
+                    dataGUI = modules['GUIModule'].recv(1024)
+                    if dataGUI:
+                        if pickle.loads(dataGUI)['dst'] == 'APP':  
+                            modules['AppicationModule'].send(pickle.dumps(pickle.loads(dataGUI)))
+                    elif pickle.loads(dataGUI)['dst'] == 'FILE':
+                        modules['FileManager'].send(pickle.dumps(pickle.loads(dataGUI)))
+            except:
+                pass
+
+def processAPPCon():
     	while True:
             try:
                 if modules['AppicationModule'] != '':
-                    data = modules['AppicationModule'].recv(1024)
-                    if data:
-                        print(pickle.loads(data))
+                    dataAPP = modules['AppicationModule'].recv(1024)
+                    if dataAPP:
+                        print(pickle.loads(dataAPP))
+            except:
+                pass
+    
+def processFILECon():
+    	while True:
+            try:
                 if modules['FileManager'] != '':
-                    data = modules['FileManager'].recv(1024)
-                    if data:
-                        print(pickle.loads(data))
-                if modules['GUIModule'] != '':
-                    data = modules['GUIModule'].recv(1024)
-                    if data:
-                        print(pickle.loads(data))
-                        if msg['dst'] == 'APP':
-                            if modules['AppicationModule'] != '':
-                                modules['AppicationModule'].send(pickle.dumps(pickle.loads(data)))
-                        elif msg['dst'] == 'FILE':
-                            if modules['FileManager'] != '':
-                                modules['FileManager'].send(pickle.dumps(pickle.loads(data)))
+                    dataFILE = modules['FileManager'].recv(1024)
+                    if dataFILE:
+                        print(pickle.loads(dataFILE))
             except:
                 pass
 
@@ -92,6 +102,11 @@ def ApplicationModuleCon():
     accept.daemon = True
     accept.start()
 
+    process = threading.Thread(target=processAPPCon)
+
+    process.daemon = True
+    process.start()
+
     ApplicationModule()
 
 def FileManagerCon():
@@ -100,6 +115,11 @@ def FileManagerCon():
     accept.daemon = True
     accept.start()
 
+    process = threading.Thread(target=processFILECon)
+
+    process.daemon = True
+    process.start()
+
     FileManager()
 
 def GUICon():
@@ -107,6 +127,13 @@ def GUICon():
 
     accept.daemon = True
     accept.start()
+
+    process = threading.Thread(target=processGUICon)
+
+    process.daemon = True
+    process.start()
+
+    GUI()
 
 def initialization():
     FileManagerCon()
@@ -121,11 +148,6 @@ def ending():
 
 
 if __name__ == '__main__':
-    process = threading.Thread(target=processCon)
-
-    process.daemon = True
-    process.start()
-
     initialization()
     while True:
         msg = input('->')

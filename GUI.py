@@ -2,6 +2,11 @@ import time
 import threading
 import logging
 import socket
+import threading
+import sys
+import pickle
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
     import tkinter as tk # Python 3.x
@@ -133,6 +138,8 @@ def connect():
         pass
 
 def main():
+    global sock
+    sock.connect(("localhost", 4000))
     root = tk.Tk()
     myGUI(root, 'main')
     process = threading.Thread(target=connect)
@@ -141,10 +148,9 @@ def main():
     root.mainloop()
 
 def send_message(process, message):
+    global sock
     msg = {'cmd': process, 'src': 'GUI', 'dst': 'APP', 'msg': message}
-    print (msg)
+    sock.send(pickle.dumps(msg))
 
 if __name__ == '__main__': 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect(("localhost", 4000))
     main()
