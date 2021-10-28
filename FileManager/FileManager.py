@@ -8,7 +8,6 @@ class FileManager(object):
 
     def __init__(self, *args):
         super(FileManager, self).__init__(*args)
-        file1 = open('kernelLog.txt','a')
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(("localhost", 4000))
 
@@ -31,7 +30,8 @@ class FileManager(object):
                             except:
                                 sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
                         else:
-                            file1.write(data)
+                            with open("kernelLog.txt", "a") as myfile:
+                                myfile.write(data['msg'] + '\n')
                             print(data)
                 except:
                     sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
