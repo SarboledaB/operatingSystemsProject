@@ -1,6 +1,8 @@
 import time
 import threading
 import logging
+import socket
+
 try:
     import tkinter as tk # Python 3.x
     import tkinter.scrolledtext as ScrolledText
@@ -31,27 +33,81 @@ class TextHandler(logging.Handler):
 
 class myGUI(tk.Frame):
 
-    # This class defines the graphical user interface 
-
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, window, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.root = parent
-        self.build_gui()
+        if window == 'main':
+            self.build_gui()
+        elif window == 'apps':
+            self.build_app()
+    
+    def build_app(self):
+        self.root.title('APPS')
+        self.root.option_add('*tearOff', 'FALSE')
+        self.grid(column=0, row=0, sticky='ew')
+
+        label = tk.Label(self, text="Modulo de aplicaciones")
+        label.configure(font='TkFixedFont')
+        label.grid(row=0, column=0, sticky="w")
+
+        button = tk.Button(self, text="Iniciar")
+        button.configure(font='TkFixedFont')
+        button.grid(row=1, column=0, sticky="nsew")
+
+        button2 = tk.Button(self, text="Terminar")
+        button2.configure(font='TkFixedFont')
+        button2.grid(row=1, column=1, sticky="nsew")
+
+        label2 = tk.Label(self, text="App 1")
+        label2.configure(font='TkFixedFont')
+        label2.grid(row=2, column=0, sticky="w")
+
+        button3 = tk.Button(self, text="Iniciar", command=lambda: send_message('open','APP1'))
+        button3.configure(font='TkFixedFont')
+        button3.grid(row=3, column=0, sticky="nsew")
+
+        button4 = tk.Button(self, text="Terminar", command=lambda: send_message('close','APP1'))
+        button4.configure(font='TkFixedFont')
+        button4.grid(row=3, column=1, sticky="nsew")
+
+        label3 = tk.Label(self, text="App  2")
+        label3.configure(font='TkFixedFont')
+        label3.grid(row=4, column=0, sticky="w")
+
+        button5 = tk.Button(self, text="Iniciar", command=lambda: send_message('open','APP2'))
+        button5.configure(font='TkFixedFont')
+        button5.grid(row=5, column=0, sticky="nsew")
+
+        button6 = tk.Button(self, text="Terminar", command=lambda: send_message('close','APP2'))
+        button6.configure(font='TkFixedFont')
+        button6.grid(row=5, column=1, sticky="nsew")
 
     def build_gui(self):                    
         # Build GUI
-        self.root.title('TEST')
+        self.root.title('GUI')
         self.root.option_add('*tearOff', 'FALSE')
         self.grid(column=0, row=0, sticky='ew')
-        self.grid_columnconfigure(0, weight=1, uniform='a')
-        self.grid_columnconfigure(1, weight=1, uniform='a')
-        self.grid_columnconfigure(2, weight=1, uniform='a')
-        self.grid_columnconfigure(3, weight=1, uniform='a')
+        # self.grid_columnconfigure(0, weight=1, uniform='a')
+        # self.grid_columnconfigure(1, weight=1, uniform='a')
+        # self.grid_columnconfigure(2, weight=1, uniform='a')
+        # self.grid_columnconfigure(3, weight=1, uniform='a')
 
         # Add text widget to display logging info
+        label = tk.Label(self, text="Logger")
+        label.configure(font='TkFixedFont')
+        label.grid(row=1, column=1, sticky="w")
+
         st = ScrolledText.ScrolledText(self, state='disabled')
         st.configure(font='TkFixedFont')
-        st.grid(column=0, row=1, sticky='w', columnspan=4)
+        st.grid(column=0, row=2, sticky='w', columnspan=3)
+        
+        button = tk.Button(self, text="Aplicaciones", command=lambda: apps())
+        button.configure(font='TkFixedFont')
+        button.grid(row=3, column=0, sticky="nsew")
+
+        button2 = tk.Button(self, text="Archivos")
+        button2.configure(font='TkFixedFont')
+        button2.grid(row=3, column=1, sticky="nsew")
 
         # Create textLogger
         text_handler = TextHandler(st)
@@ -65,24 +121,30 @@ class myGUI(tk.Frame):
         logger = logging.getLogger()        
         logger.addHandler(text_handler)
 
-def worker():
-    # Skeleton worker function, runs in separate thread (see below)   
+def apps():
+    apps = tk.Tk()
+    myGUI(apps, 'apps')
+
+def archives(self):
+    archives = tk.Tk()
+
+def connect():
     while True:
-        # Report time / date at 2-second intervals
-        time.sleep(2)
-        timeStr = time.asctime()
-        msg = 'Current time: ' + timeStr
-        logging.info(msg) 
+        pass
 
 def main():
-
     root = tk.Tk()
-    myGUI(root)
-
-    t1 = threading.Thread(target=worker, args=[])
-    t1.start()
-
+    myGUI(root, 'main')
+    process = threading.Thread(target=connect)
+    process.daemon = True
+    process.start()
     root.mainloop()
-    t1.join()
 
-main()
+def send_message(process, message):
+    msg = {'cmd': process, 'src': 'GUI', 'dst': 'APP', 'msg': message}
+    print (msg)
+
+if __name__ == '__main__': 
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect(("localhost", 4000))
+    main()
