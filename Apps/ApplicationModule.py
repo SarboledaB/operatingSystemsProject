@@ -35,7 +35,7 @@ class ApplicationModule(object):
                                     else:
                                         sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
                                 else:
-                                    sock.send(pickle.dumps({'codeterm': 1, 'msg': 'O'}))
+                                    sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
                             elif data['cmd'] == 'open':   
                                 if applications['APP1'] == '': 
                                     if App1Init():    
@@ -54,7 +54,7 @@ class ApplicationModule(object):
                                     else:
                                         sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
                                 else:
-                                    sock.send(pickle.dumps({'codeterm': 1, 'msg': 'O'}))
+                                    sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
                             elif data['cmd'] == 'open':   
                                 if applications['APP2'] == '': 
                                     if App2Init():    
