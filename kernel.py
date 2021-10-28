@@ -9,7 +9,8 @@ host="localhost"
 port=4000
 modules = {
     "AppicationModule" : '',
-    "FileManager" : ''
+    "FileManager"      : '',
+    "GUIModule"        : '',
 }
 
 prueba = {'cmd': 'delete', 'src': 'GUI', 'dst': 'FILE', 'msg': 'ARCHIVO1'}
@@ -29,6 +30,20 @@ def acceptConAppicationModule():
             modules['AppicationModule'] = conn
             print(modules)
             if modules['AppicationModule'] != '':
+              x = False  
+        except:
+            pass
+
+def acceptConGUIModule():
+    x = True
+    while x:
+        try:
+            conn, addr = sock.accept()
+            conn.setblocking(False)
+            print(conn)
+            modules['GUIModule'] = conn
+            print(modules)
+            if modules['GUIModule'] != '':
               x = False  
         except:
             pass
@@ -53,11 +68,22 @@ def processCon():
                 if modules['AppicationModule'] != '':
                     data = modules['AppicationModule'].recv(1024)
                     if data:
-                        print(pickle.loads(data)['msg'])
+                        print(pickle.loads(data))
                 if modules['FileManager'] != '':
                     data = modules['FileManager'].recv(1024)
                     if data:
-                        print(pickle.loads(data)['msg'])
+                        print(pickle.loads(data))
+                if modules['GUIModule'] != '':
+                    data = modules['GUIModule'].recv(1024)
+                    if data:
+                        msg = pickle.loads(data)
+                        print(pickle.loads(data))
+                        if msg['dst'] == 'APP':
+                            if modules['AppicationModule'] != '':
+                                modules['AppicationModule'].send(pickle.dumps(prueba))
+                        elif msg['dst'] == 'FILE':
+                            if modules['FileManager'] != '':
+                                modules['FileManager'].send(pickle.dumps(prueba))
             except:
                 pass
 
@@ -77,9 +103,16 @@ def FileManagerCon():
 
     FileManager()
 
+def GUICon():
+    accept = threading.Thread(target=acceptConGUIModule)
+
+    accept.daemon = True
+    accept.start()
+
 def initialization():
     FileManagerCon()
     ApplicationModuleCon()
+    GUICon()
 
 def execution():
     pass
