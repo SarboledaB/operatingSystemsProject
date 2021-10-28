@@ -34,9 +34,7 @@ def acceptConAppicationModule():
         try:
             conn, addr = sock.accept()
             conn.setblocking(False)
-            print(conn)
             modules['AppicationModule'] = conn
-            print(modules)
             if modules['AppicationModule'] != '':
               x = False  
         except:
@@ -48,9 +46,7 @@ def acceptConGUIModule():
         try:
             conn, addr = sock.accept()
             conn.setblocking(False)
-            print(conn)
             modules['GUIModule'] = conn
-            print(modules)
             if modules['GUIModule'] != '':
               x = False  
         except:
@@ -62,9 +58,7 @@ def acceptConFileManager():
         try:
             conn, addr = sock.accept()
             conn.setblocking(False)
-            print(conn)
             modules['FileManager'] = conn
-            print(modules)
             if modules['FileManager'] != '':
               x = False  
         except:
