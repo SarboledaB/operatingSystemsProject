@@ -4,6 +4,7 @@ import sys
 import pickle
 import os
 import psutil
+import time
 
 from Apps.App1 import App1Init, App1Stop
 from Apps.App2 import App2Init, App2Stop
@@ -122,6 +123,7 @@ class ApplicationModule(object):
             
         def ActiveApp2():
             global applications
+            time.sleep(2)
             running = True
             while running:
                 count = 0
