@@ -151,7 +151,15 @@ def open_window(wtype):
 
 def connect():
     while True:
-        pass
+        try:
+            data = sock.recv(1024)
+            if data:
+                data = pickle.loads(data)
+                if data['codeterm'] == 3:
+                    for line in data['data'].split('\n'):
+                        logging.info(line)      
+        except:
+            pass
     
 
 def main():
@@ -162,6 +170,7 @@ def main():
     process = threading.Thread(target=connect)
     process.daemon = True
     process.start()
+    # send_message('info','FILE','data')
     root.mainloop()
 
 def send_message(process, dst, message):

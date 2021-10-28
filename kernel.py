@@ -18,7 +18,8 @@ modules = {
 codes = {
     0: 'Procesado',
     1: 'Ocupado',
-    2: 'Err'
+    2: 'Err',
+    3: 'Procesado'
 }
 
 prueba = {'cmd': 'delete', 'src': 'GUI', 'dst': 'FILE', 'msg': 'ARCHIVO1'}
@@ -104,9 +105,15 @@ def processFILECon():
                 if modules['FileManager'] != '':
                     dataFILE = modules['FileManager'].recv(1024)
                     if dataFILE:
-                        msg = str(datetime.datetime.now()) + '->' + codes[pickle.loads(dataFILE)['codeterm']] + ' ' + 'FILE'
-                        log = {'cmd': 'send','src': 'FILE', 'dest': 'FILE', 'msg': msg}
-                        modules['FileManager'].send(pickle.dumps(log))
+                        if pickle.loads(dataFILE)['codeterm'] == 3:
+                            msg = str(datetime.datetime.now()) + '->' + codes[pickle.loads(dataFILE)['codeterm']] + ' ' + 'FILE'
+                            log = {'cmd': 'send','src': 'FILE', 'dest': 'GUI', 'msg': msg}
+                            modules['FileManager'].send(pickle.dumps(log))
+                            modules['GUIModule'].send(pickle.dumps(pickle.loads(dataFILE)))
+                        else:
+                            msg = str(datetime.datetime.now()) + '->' + codes[pickle.loads(dataFILE)['codeterm']] + ' ' + 'FILE'
+                            log = {'cmd': 'send','src': 'FILE', 'dest': 'FILE', 'msg': msg}
+                            modules['FileManager'].send(pickle.dumps(log))
             except:
                 pass
 

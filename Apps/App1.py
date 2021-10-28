@@ -17,7 +17,7 @@ def App1Init():
 def App1Stop():
     try:
         for p in psutil.process_iter():
-            if p.name() == 'Calculator.exe':
+            if p.name() == 'Calculator.exe' or p.name() == 'CalculatorApp.exe':
                 print(p, p.name(), p.pid)
                 os.system('taskkill /F /PID {0}'.format(p.pid))
                 return True
