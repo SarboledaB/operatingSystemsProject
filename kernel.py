@@ -2,6 +2,7 @@ import socket
 import threading
 import sys
 import pickle
+import datetime
 from Apps.ApplicationModule import ApplicationModule
 from FileManager.FileManager import FileManager
 from GUI import main as GUI
@@ -12,6 +13,12 @@ modules = {
     "AppicationModule" : '',
     "FileManager"      : '',
     "GUIModule"        : '',
+}
+
+codes = {
+    0: 'Procesado',
+    1: 'Ocupado',
+    2: 'Err'
 }
 
 prueba = {'cmd': 'delete', 'src': 'GUI', 'dst': 'FILE', 'msg': 'ARCHIVO1'}
@@ -73,6 +80,9 @@ def processGUICon():
                             modules['AppicationModule'].send(pickle.dumps(pickle.loads(dataGUI)))
                         elif pickle.loads(dataGUI)['dst'] == 'FILE':
                             modules['FileManager'].send(pickle.dumps(pickle.loads(dataGUI)))
+                        msg = str(datetime.datetime.now()) + '->' + pickle.loads(dataGUI)['cmd'] + ' ' + pickle.loads(dataGUI)['msg']
+                        log = {'cmd': 'send','src': 'GUI', 'dest': 'FILE', 'msg': msg}
+                        modules['FileManager'].send(pickle.dumps(log))
             except:
                 pass
 
@@ -82,7 +92,9 @@ def processAPPCon():
                 if modules['AppicationModule'] != '':
                     dataAPP = modules['AppicationModule'].recv(1024)
                     if dataAPP:
-                        print(pickle.loads(dataAPP))
+                        msg = str(datetime.datetime.now()) + '->' + codes[pickle.loads(dataAPP)['codeterm']] + ' ' + 'APP'
+                        log = {'cmd': 'send','src': 'APP', 'dest': 'FILE', 'msg': msg}
+                        modules['FileManager'].send(pickle.dumps(log))
             except:
                 pass
     
@@ -92,7 +104,9 @@ def processFILECon():
                 if modules['FileManager'] != '':
                     dataFILE = modules['FileManager'].recv(1024)
                     if dataFILE:
-                        print(pickle.loads(dataFILE))
+                        msg = str(datetime.datetime.now()) + '->' + codes[pickle.loads(dataFILE)['codeterm']] + ' ' + 'FILE'
+                        log = {'cmd': 'send','src': 'FILE', 'dest': 'FILE', 'msg': msg}
+                        modules['FileManager'].send(pickle.dumps(log))
             except:
                 pass
 
@@ -149,15 +163,3 @@ def ending():
 
 if __name__ == '__main__':
     initialization()
-    while True:
-        msg = input('->')
-        if msg == 'salir':
-            sock.close()
-            sys.exit()
-        elif msg == 'send':
-            if prueba['dst'] == 'APP':
-                if modules['AppicationModule'] != '':
-                    modules['AppicationModule'].send(pickle.dumps(prueba))
-            elif prueba['dst'] == 'FILE':
-                if modules['FileManager'] != '':
-                    modules['FileManager'].send(pickle.dumps(prueba))

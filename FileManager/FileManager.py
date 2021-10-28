@@ -8,6 +8,7 @@ class FileManager(object):
 
     def __init__(self, *args):
         super(FileManager, self).__init__(*args)
+        file1 = open('kernelLog.txt','a')
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(("localhost", 4000))
 
@@ -17,7 +18,6 @@ class FileManager(object):
                     data = sock.recv(1024)
                     if data:
                         data = pickle.loads(data)
-                        print(data)
                         if data['cmd'] == 'create':
                             try:
                                 os.mkdir(data['msg'])
@@ -30,6 +30,9 @@ class FileManager(object):
                                 sock.send(pickle.dumps({'codeterm': 0, 'msg': 'OK'}))
                             except:
                                 sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
+                        else:
+                            file1.write(data)
+                            print(data)
                 except:
                     sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
 
