@@ -150,6 +150,7 @@ def main():
 def send_message(process, message):
     global sock
     msg = {'cmd': process, 'src': 'GUI', 'dst': 'APP', 'msg': message}
+    print(msg)
     sock.send(pickle.dumps(msg))
 
 if __name__ == '__main__': 

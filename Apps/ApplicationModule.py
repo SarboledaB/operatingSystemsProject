@@ -27,10 +27,11 @@ class ApplicationModule(object):
                     if data:
                         data = pickle.loads(data)
                         if data['msg'] == 'APP1':
-                            if data['cmd'] == 'stop':
+                            if data['cmd'] == 'close':
                                 if applications['APP1'] != '': 
-                                    if App1Stop(applications['APP1']):    
+                                    if App1Stop():    
                                         sock.send(pickle.dumps({'codeterm': 0, 'msg': 'OK'}))
+                                        applications['APP1'] = ''
                                     else:
                                         sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
                                 else:
@@ -45,10 +46,11 @@ class ApplicationModule(object):
                                 else:
                                     sock.send(pickle.dumps({'codeterm': 1, 'msg': 'O'}))
                         elif data['msg'] == 'APP2':
-                            if data['cmd'] == 'stop':
+                            if data['cmd'] == 'close':
                                 if applications['APP2'] != '': 
-                                    if App2Stop(applications['APP2']):    
+                                    if App2Stop():    
                                         sock.send(pickle.dumps({'codeterm': 0, 'msg': 'OK'}))
+                                        applications['APP2'] = ''
                                     else:
                                         sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
                                 else:
