@@ -80,10 +80,10 @@ def processCon():
                         print(pickle.loads(data))
                         if msg['dst'] == 'APP':
                             if modules['AppicationModule'] != '':
-                                modules['AppicationModule'].send(pickle.dumps(prueba))
+                                modules['AppicationModule'].send(pickle.dumps(msg))
                         elif msg['dst'] == 'FILE':
                             if modules['FileManager'] != '':
-                                modules['FileManager'].send(pickle.dumps(prueba))
+                                modules['FileManager'].send(pickle.dumps(msg))
             except:
                 pass
 
