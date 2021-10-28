@@ -71,8 +71,8 @@ def processGUICon():
                     if dataGUI:
                         if pickle.loads(dataGUI)['dst'] == 'APP':  
                             modules['AppicationModule'].send(pickle.dumps(pickle.loads(dataGUI)))
-                    elif pickle.loads(dataGUI)['dst'] == 'FILE':
-                        modules['FileManager'].send(pickle.dumps(pickle.loads(dataGUI)))
+                        elif pickle.loads(dataGUI)['dst'] == 'FILE':
+                            modules['FileManager'].send(pickle.dumps(pickle.loads(dataGUI)))
             except:
                 pass
 

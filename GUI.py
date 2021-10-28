@@ -45,7 +45,26 @@ class myGUI(tk.Frame):
             self.build_gui()
         elif window == 'apps':
             self.build_app()
+        elif window == 'file_manager':
+            self.build_file_manager()
     
+    def build_file_manager(self):
+        self.root.title('FILE MANAGER')
+        self.root.option_add('*tearOff', 'FALSE')
+        self.grid(column=0, row=0, sticky='ew')
+
+        entry = tk.Entry(self.root)
+        entry.grid(row=1, column=0, sticky="nsew")
+            
+        button = tk.Button(self, text="Crear", command=lambda: send_message('create', 'FILE', entry.get()))
+        button.configure(font='TkFixedFont')
+        button.grid(row=2, column=1, sticky="nsew")
+
+        button2 = tk.Button(self, text="Eliminar", command=lambda: send_message('delete', 'FILE', entry.get()))
+        button2.configure(font='TkFixedFont')
+        button2.grid(row=2, column=2, sticky="nsew")
+
+
     def build_app(self):
         self.root.title('APPS')
         self.root.option_add('*tearOff', 'FALSE')
@@ -67,11 +86,11 @@ class myGUI(tk.Frame):
         label2.configure(font='TkFixedFont')
         label2.grid(row=2, column=0, sticky="w")
 
-        button3 = tk.Button(self, text="Iniciar", command=lambda: send_message('open','APP1'))
+        button3 = tk.Button(self, text="Iniciar", command=lambda: send_message('open', 'APP','APP1'))
         button3.configure(font='TkFixedFont')
         button3.grid(row=3, column=0, sticky="nsew")
 
-        button4 = tk.Button(self, text="Terminar", command=lambda: send_message('close','APP1'))
+        button4 = tk.Button(self, text="Terminar", command=lambda: send_message('close', 'APP','APP1'))
         button4.configure(font='TkFixedFont')
         button4.grid(row=3, column=1, sticky="nsew")
 
@@ -79,11 +98,11 @@ class myGUI(tk.Frame):
         label3.configure(font='TkFixedFont')
         label3.grid(row=4, column=0, sticky="w")
 
-        button5 = tk.Button(self, text="Iniciar", command=lambda: send_message('open','APP2'))
+        button5 = tk.Button(self, text="Iniciar", command=lambda: send_message('open', 'APP','APP2'))
         button5.configure(font='TkFixedFont')
         button5.grid(row=5, column=0, sticky="nsew")
 
-        button6 = tk.Button(self, text="Terminar", command=lambda: send_message('close','APP2'))
+        button6 = tk.Button(self, text="Terminar", command=lambda: send_message('close', 'APP','APP2'))
         button6.configure(font='TkFixedFont')
         button6.grid(row=5, column=1, sticky="nsew")
 
@@ -106,11 +125,11 @@ class myGUI(tk.Frame):
         st.configure(font='TkFixedFont')
         st.grid(column=0, row=2, sticky='w', columnspan=3)
         
-        button = tk.Button(self, text="Aplicaciones", command=lambda: apps())
+        button = tk.Button(self, text="Aplicaciones", command=lambda: open_window('apps'))
         button.configure(font='TkFixedFont')
         button.grid(row=3, column=0, sticky="nsew")
 
-        button2 = tk.Button(self, text="Archivos")
+        button2 = tk.Button(self, text="Archivos", command=lambda: open_window('file_manager'))
         button2.configure(font='TkFixedFont')
         button2.grid(row=3, column=1, sticky="nsew")
 
@@ -126,16 +145,14 @@ class myGUI(tk.Frame):
         logger = logging.getLogger()        
         logger.addHandler(text_handler)
 
-def apps():
-    apps = tk.Tk()
-    myGUI(apps, 'apps')
-
-def archives(self):
-    archives = tk.Tk()
+def open_window(wtype):
+    window = tk.Tk()
+    myGUI(window, wtype)
 
 def connect():
     while True:
         pass
+    
 
 def main():
     global sock
@@ -147,9 +164,9 @@ def main():
     process.start()
     root.mainloop()
 
-def send_message(process, message):
+def send_message(process, dst, message):
     global sock
-    msg = {'cmd': process, 'src': 'GUI', 'dst': 'APP', 'msg': message}
+    msg = {'cmd': process, 'src': 'GUI', 'dst': dst, 'msg': message}
     sock.send(pickle.dumps(msg))
 
 if __name__ == '__main__': 
