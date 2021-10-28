@@ -71,8 +71,26 @@ def processGUICon():
                 if modules['GUIModule'] != '':
                     dataGUI = modules['GUIModule'].recv(1024)
                     if dataGUI:
-                        if pickle.loads(dataGUI)['dst'] == 'APP':  
-                            modules['AppicationModule'].send(pickle.dumps(pickle.loads(dataGUI)))
+                        if pickle.loads(dataGUI)['dst'] == 'APP':
+                            try:
+                                modules['AppicationModule'].send(pickle.dumps(pickle.loads(dataGUI)))
+                            except:
+                                if pickle.loads(dataGUI)['msg'] == 'APP':
+                                    if pickle.loads(dataGUI)['cmd'] == 'open':
+                                        pass
+                                    else:
+                                        msg = str(datetime.datetime.now()) + '->' + 'Modulo de aplicaciones sin conexión'
+                                        log = {'cmd': 'send','src': 'GUI', 'dest': 'FILE', 'msg': msg}
+                                        modules['FileManager'].send(pickle.dumps(log))
+                                else:
+                                    msg = str(datetime.datetime.now()) + '->' + 'Modulo de aplicaciones sin conexión'
+                                    log = {'cmd': 'send','src': 'GUI', 'dest': 'FILE', 'msg': msg}
+                                    modules['FileManager'].send(pickle.dumps(log))
+                            if pickle.loads(dataGUI)['msg'] == 'APP':
+                                if pickle.loads(dataGUI)['cmd'] == 'open':
+                                    ApplicationModuleCon()
+                                elif pickle.loads(dataGUI)['cmd'] == 'close':
+                                    modules['AppicationModule'] = ''
                         elif pickle.loads(dataGUI)['dst'] == 'FILE':
                             modules['FileManager'].send(pickle.dumps(pickle.loads(dataGUI)))
                         msg = str(datetime.datetime.now()) + '->' + pickle.loads(dataGUI)['cmd'] + ' ' + pickle.loads(dataGUI)['msg']
@@ -154,9 +172,6 @@ def initialization():
     FileManagerCon()
     ApplicationModuleCon()
     GUICon()
-
-def execution():
-    pass
 
 def ending():
     pass

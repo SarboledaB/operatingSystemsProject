@@ -17,8 +17,9 @@ class ApplicationModule(object):
     def __init__(self, *args):
         super(ApplicationModule, self).__init__(*args)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect(("localhost", 4000))
+        sock.connect(("localhost", 4000))  
 
+        
         def proceso():
             global applications
             while True:
@@ -64,10 +65,32 @@ class ApplicationModule(object):
                                         sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
                                 else:
                                     sock.send(pickle.dumps({'codeterm': 1, 'msg': 'O'}))
+                        elif data['msg'] == 'APP':
+                            if data['cmd'] == 'close':
+                                if applications['APP1'] != '':
+                                    applications['APP1'] = ''
+                                    if App1Stop():    
+                                        sock.send(pickle.dumps({'codeterm': 0, 'msg': 'OK'}))
+                                    else:
+                                        sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
+                                else:
+                                    sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
+                                if applications['APP2'] != '': 
+                                    applications['APP2'] = ''
+                                    if App2Stop():    
+                                        sock.send(pickle.dumps({'codeterm': 0, 'msg': 'OK'}))
+                                    else:
+                                        sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
+                                else:
+                                    sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
+                                try:
+                                    sock.close()
+                                except print(0):
+                                    sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
                         else:
                             sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
                 except:
-                    sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
+                    pass
 
         process = threading.Thread(target=proceso)
 
