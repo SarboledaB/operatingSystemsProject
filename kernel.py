@@ -19,7 +19,8 @@ codes = {
     0: 'Procesado',
     1: 'Ocupado',
     2: 'Err',
-    3: 'Procesado'
+    3: 'Procesado',
+    4: 'Terminado'
 }
 
 prueba = {'cmd': 'delete', 'src': 'GUI', 'dst': 'FILE', 'msg': 'ARCHIVO1'}
@@ -87,9 +88,14 @@ def processAPPCon():
                 if modules['AppicationModule'] != '':
                     dataAPP = modules['AppicationModule'].recv(1024)
                     if dataAPP:
-                        msg = str(datetime.datetime.now()) + '->' + codes[pickle.loads(dataAPP)['codeterm']] + ' ' + 'APP'
-                        log = {'cmd': 'send','src': 'APP', 'dest': 'FILE', 'msg': msg}
-                        modules['FileManager'].send(pickle.dumps(log))
+                        if pickle.loads(dataAPP)['codeterm'] == 4:
+                            msg = str(datetime.datetime.now()) + '->' + codes[pickle.loads(dataAPP)['codeterm']] + ' ' + pickle.loads(dataAPP)['msg']
+                            log = {'cmd': 'send','src': 'APP', 'dest': 'FILE', 'msg': msg}
+                            modules['FileManager'].send(pickle.dumps(log))
+                        else:
+                            msg = str(datetime.datetime.now()) + '->' + codes[pickle.loads(dataAPP)['codeterm']] + ' ' + 'APP'
+                            log = {'cmd': 'send','src': 'APP', 'dest': 'FILE', 'msg': msg}
+                            modules['FileManager'].send(pickle.dumps(log))
             except:
                 pass
     

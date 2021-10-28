@@ -3,6 +3,8 @@ import threading
 import sys
 import pickle
 import os
+import psutil
+
 from Apps.App1 import App1Init, App1Stop
 from Apps.App2 import App2Init, App2Stop
 
@@ -41,6 +43,9 @@ class ApplicationModule(object):
                                     if App1Init():    
                                         sock.send(pickle.dumps({'codeterm': 0, 'msg': 'OK'}))
                                         applications['APP1'] = 'ocupada'
+                                        process_app1 = threading.Thread(target=ActiveApp1)
+                                        process_app1.daemon = True
+                                        process_app1.start()
                                     else:
                                         sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
                                 else:
@@ -60,6 +65,9 @@ class ApplicationModule(object):
                                     if App2Init():    
                                         sock.send(pickle.dumps({'codeterm': 0, 'msg': 'OK'}))
                                         applications['APP2'] = 'ocupada'
+                                        process_app2 = threading.Thread(target=ActiveApp2)
+                                        process_app2.daemon = True
+                                        process_app2.start()
                                     else:
                                         sock.send(pickle.dumps({'codeterm': 2, 'msg': 'Err'}))
                                 else:
@@ -73,6 +81,32 @@ class ApplicationModule(object):
 
         process.daemon = True
         process.start()
+
+        def ActiveApp1():
+            global applications
+            running = True
+            while running:
+                count = 0
+                for p in psutil.process_iter():
+                    if p.name() == 'Calculator.exe' or p.name() == 'CalculatorApp.exe':
+                        count=1
+                running = (count == 1)
+            sock.send(pickle.dumps({'codeterm': 4, 'msg': 'APP1'}))
+            applications['APP1'] = ''
+            
+        def ActiveApp2(running):
+            global applications
+            running = True
+            while running:
+                count = 0
+                for p in psutil.process_iter():
+                    if p.name() == 'mspaint.exe':
+                        count=1
+                running = (count == 1)
+            sock.send(pickle.dumps({'codeterm': 4, 'msg': 'APP2'}))
+            applications['APP2'] = ''
+    
+  
 
 
 
