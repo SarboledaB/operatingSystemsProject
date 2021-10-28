@@ -74,11 +74,11 @@ class myGUI(tk.Frame):
         label.configure(font='TkFixedFont')
         label.grid(row=0, column=0, sticky="w")
 
-        button = tk.Button(self, text="Iniciar")
+        button = tk.Button(self, text="Iniciar", command=lambda: send_message('open', 'APP','APP'))
         button.configure(font='TkFixedFont')
         button.grid(row=1, column=0, sticky="nsew")
 
-        button2 = tk.Button(self, text="Terminar")
+        button2 = tk.Button(self, text="Terminar", command=lambda: send_message('close', 'APP','APP'))
         button2.configure(font='TkFixedFont')
         button2.grid(row=1, column=1, sticky="nsew")
 
