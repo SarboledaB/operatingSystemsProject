@@ -22,6 +22,3 @@ def App2Stop():
         return True
     except:
         return False
-    
-App2Init()
-App2Stop()
